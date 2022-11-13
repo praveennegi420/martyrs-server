@@ -142,10 +142,20 @@ app.post('/be-volunteer', auth, async (req, res) => {
     res.send('volunteered')
 })
 
-app.get('/post/:id', async (req, res) => {
+app.post('/post/:id', auth, async (req, res) => {
     console.log(req.params.id)
+    const user= await UserModel.findById(req.user._id)
     const post = await HelpModel.findById(req.params.id)
-    res.json({post})
+    // console.log(user)
+    res.json({post, user})
+})
+
+app.post('/verifypost', async (req, res) => {
+    const post= await HelpModel.findById(req.body.id)
+    // console.log(post)
+    await post.updateOne({verified:true})
+
+    res.json({message: 'Verified'})
 })
 
 app.get('*', (req, res) => {
